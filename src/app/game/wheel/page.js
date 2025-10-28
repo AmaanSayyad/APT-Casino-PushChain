@@ -141,8 +141,39 @@ export default function Home() {
           console.log('🔗 Push Chain logging result (Wheel):', pushResult);
           console.log('🔗 Push Chain TX Hash:', pushResult.transactionHash);
           console.log('🔗 Push Chain Explorer URL:', pushResult.pushChainExplorerUrl);
+
+          // Log to Solana as well
+          const solanaResponse = await fetch('/api/log-to-solana', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              gameType: 'WHEEL',
+              gameResult: {
+                multiplier: targetHistoryItem.multiplier,
+                payout: targetHistoryItem.payout,
+                segments: targetHistoryItem.segments || 'unknown'
+              },
+              playerAddress: 'unknown', // Will be updated when wallet integration is available
+              betAmount: targetHistoryItem.betAmount || 0,
+              payout: targetHistoryItem.payout || 0,
+              entropyProof: {
+                requestId: entropyResult.entropyProof?.requestId,
+                sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
+                randomValue: entropyResult.randomValue,
+                transactionHash: entropyResult.entropyProof?.transactionHash,
+                timestamp: entropyResult.entropyProof?.timestamp
+              }
+            })
+          });
           
-          // Update the history item with real entropy proof and Push Chain info
+          const solanaResult = await solanaResponse.json();
+          console.log('🔗 Solana logging result (Wheel):', solanaResult);
+          console.log('🔗 Solana TX Signature:', solanaResult.transactionSignature);
+          console.log('🔗 Solana Explorer URL:', solanaResult.solanaExplorerUrl);
+          
+          // Update the history item with real entropy proof, Push Chain and Solana info
           console.log('🔄 Updating history item with ID:', historyItemId);
           setGameHistory(prev => {
             const updated = prev.map(item => 
@@ -160,7 +191,9 @@ export default function Home() {
                       timestamp: entropyResult.entropyProof?.timestamp,
                       source: 'Pyth Entropy',
                       pushChainTxHash: pushResult.success ? pushResult.transactionHash : null,
-                      pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null
+                      pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null,
+                      solanaTxSignature: solanaResult.success ? solanaResult.transactionSignature : null,
+                      solanaExplorerUrl: solanaResult.success ? solanaResult.solanaExplorerUrl : null
                     }
                   }
                 : item

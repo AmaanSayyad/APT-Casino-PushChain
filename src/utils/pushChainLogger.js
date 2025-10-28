@@ -46,7 +46,7 @@ export const logGameResultToPushChain = async (gameData) => {
 };
 
 /**
- * Oyun sonuçlarını hem entropy hem de Push Chain'e loglar
+ * Oyun sonuçlarını hem entropy hem de Push Chain hem de Solana'ya loglar
  */
 export const logCompleteGameResult = async (gameType, gameResult, playerAddress, betAmount, payout, entropyProof) => {
   const gameData = {
@@ -61,15 +61,34 @@ export const logCompleteGameResult = async (gameType, gameResult, playerAddress,
   // Push Chain'e logla
   const pushResult = await logGameResultToPushChain(gameData);
 
+  // Solana'ya logla
+  let solanaResult = { success: false };
+  try {
+    const solanaResponse = await fetch('/api/log-to-solana', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(gameData),
+    });
+    solanaResult = await solanaResponse.json();
+  } catch (error) {
+    console.error('❌ Error logging to Solana:', error);
+    solanaResult = { success: false, error: error.message };
+  }
+
   return {
     entropyProof,
     pushChainResult: pushResult,
+    solanaResult: solanaResult,
     // Oyun history'si için birleştirilmiş data
     combinedResult: {
       ...gameResult,
       entropyProof,
       pushChainTxHash: pushResult.success ? pushResult.transactionHash : null,
       pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null,
+      solanaTxSignature: solanaResult.success ? solanaResult.transactionSignature : null,
+      solanaExplorerUrl: solanaResult.success ? solanaResult.solanaExplorerUrl : null,
       timestamp: Date.now()
     }
   };

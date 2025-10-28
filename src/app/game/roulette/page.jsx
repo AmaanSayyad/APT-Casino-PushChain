@@ -2079,6 +2079,51 @@ export default function GameRoulette() {
             .catch(error => {
               console.error('❌ Push Chain logging failed:', error);
             });
+
+          // Log game result to Solana
+          fetch('/api/log-to-solana', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              gameType: 'ROULETTE',
+              gameResult: {
+                winningNumber,
+                totalBets: allBets.length,
+                winningBets: winningBets.length,
+                losingBets: losingBets.length
+              },
+              playerAddress: address || 'unknown',
+              betAmount: totalBetAmount,
+              payout: netResult,
+              entropyProof: newBet.entropyProof
+            })
+          }).then(response => response.json())
+            .then(solanaResult => {
+              console.log('🔗 Solana logging result:', solanaResult);
+              if (solanaResult.success) {
+                // Add Solana info to bet result
+                newBet.solanaTxSignature = solanaResult.transactionSignature;
+                newBet.solanaExplorerUrl = solanaResult.solanaExplorerUrl;
+                
+                // Update betting history with Solana info
+                setBettingHistory(prev => {
+                  const updatedHistory = [...prev];
+                  if (updatedHistory.length > 0) {
+                    updatedHistory[0] = { 
+                      ...updatedHistory[0], 
+                      solanaTxSignature: solanaResult.transactionSignature,
+                      solanaExplorerUrl: solanaResult.solanaExplorerUrl
+                    };
+                  }
+                  return updatedHistory;
+                });
+              }
+            })
+            .catch(error => {
+              console.error('❌ Solana logging failed:', error);
+            });
           
           // Update betting history with entropy proof
           setBettingHistory(prev => {

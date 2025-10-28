@@ -636,6 +636,29 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           >
                             Push
                           </Button>
+                          <Button
+                            onClick={() => {
+                              const url = item.entropyProof?.solanaExplorerUrl ||
+                                         `https://explorer.solana.com/tx/${item.solanaTxSignature}?cluster=testnet`;
+                              if (url) {
+                                window.open(url, '_blank');
+                              }
+                            }}
+                            size="small"
+                            startIcon={<FaExternalLinkAlt size={10} />}
+                            sx={{ 
+                              color: '#14D854',
+                              fontSize: '0.7rem',
+                              minWidth: 'auto',
+                              p: 0,
+                              '&:hover': {
+                                backgroundColor: 'transparent',
+                                textDecoration: 'underline',
+                              }
+                            }}
+                          >
+                            Solana
+                          </Button>
                         </Box>
                         <Typography variant="caption" color="rgba(255,255,255,0.5)">
                           Pyth Entropy

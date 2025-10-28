@@ -132,6 +132,19 @@ export default function GameHistory({ history }) {
                               Push
                             </button>
                           )}
+                          {(game.entropyProof.solanaExplorerUrl || game.solanaTxSignature) && (
+                            <button
+                              onClick={() => {
+                                const url = game.entropyProof.solanaExplorerUrl || 
+                                           `https://explorer.solana.com/tx/${game.solanaTxSignature}?cluster=testnet`;
+                                window.open(url, '_blank');
+                              }}
+                              className="flex items-center gap-1 px-2 py-1 bg-[#14D854]/10 border border-[#14D854]/30 rounded text-[#14D854] text-xs hover:bg-[#14D854]/20 transition-colors"
+                            >
+                              <FaExternalLinkAlt size={8} />
+                              Solana
+                            </button>
+                          )}
                           {game.entropyProof.transactionHash && (
                             <button
                               onClick={() => openEntropyExplorer(game.entropyProof.transactionHash)}
@@ -165,6 +178,16 @@ export default function GameHistory({ history }) {
                         >
                           <FaExternalLinkAlt size={8} />
                           Push
+                        </button>
+                        <button
+                          onClick={() => {
+                            const url = `https://explorer.solana.com/tx/${game.id}?cluster=testnet`;
+                            window.open(url, '_blank');
+                          }}
+                          className="flex items-center gap-1 px-2 py-1 bg-[#14D854]/10 border border-[#14D854]/30 rounded text-[#14D854] text-xs hover:bg-[#14D854]/20 transition-colors"
+                        >
+                          <FaExternalLinkAlt size={8} />
+                          Solana
                         </button>
                       </div>
                     )}

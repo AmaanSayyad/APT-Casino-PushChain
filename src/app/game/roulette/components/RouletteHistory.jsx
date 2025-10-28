@@ -614,6 +614,36 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                     </Typography>
                                   </Box>
                                 )}
+                                {(bet.entropyProof?.solanaExplorerUrl || bet.solanaTxSignature) && (
+                                  <Box
+                                    onClick={() => {
+                                      const url = bet.entropyProof?.solanaExplorerUrl || 
+                                                 bet.solanaExplorerUrl ||
+                                                 `https://explorer.solana.com/tx/${bet.solanaTxSignature}?cluster=testnet`;
+                                      window.open(url, '_blank');
+                                    }}
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 0.5,
+                                      cursor: 'pointer',
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      backgroundColor: 'rgba(20, 216, 84, 0.1)',
+                                      border: '1px solid rgba(20, 216, 84, 0.3)',
+                                      transition: 'all 0.2s ease',
+                                      '&:hover': {
+                                        backgroundColor: 'rgba(20, 216, 84, 0.2)',
+                                        transform: 'scale(1.05)'
+                                      }
+                                    }}
+                                  >
+                                    <FaExternalLinkAlt size={10} color="#14D854" />
+                                    <Typography variant="caption" sx={{ color: '#14D854', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                      Solana
+                                    </Typography>
+                                  </Box>
+                                )}
                               </Box>
                             </Box>
                           ) : (

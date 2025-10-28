@@ -247,6 +247,39 @@ export default function Mines() {
       } catch (error) {
         console.error('❌ Push Chain logging failed (Mines):', error);
       }
+
+      // Log game result to Solana
+      try {
+        const solanaResponse = await fetch('/api/log-to-solana', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameType: 'MINES',
+            gameResult: {
+              mines: result.mines,
+              outcome: result.won ? 'win' : 'loss',
+              multiplier: result.multiplier,
+              payout: result.payout
+            },
+            playerAddress: 'unknown', // Will be updated when wallet integration is available
+            betAmount: result.betAmount || 0,
+            payout: result.payout || 0,
+            entropyProof: entropyProof
+          })
+        });
+        
+        const solanaResult = await solanaResponse.json();
+        console.log('🔗 Solana logging result (Mines):', solanaResult);
+        
+        if (solanaResult.success) {
+          entropyProof.solanaTxSignature = solanaResult.transactionSignature;
+          entropyProof.solanaExplorerUrl = solanaResult.solanaExplorerUrl;
+        }
+      } catch (error) {
+        console.error('❌ Solana logging failed (Mines):', error);
+      }
     } catch (error) {
       console.error('❌ Error using Pyth Entropy for Mines game:', error);
     }

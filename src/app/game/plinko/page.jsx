@@ -251,6 +251,39 @@ export default function Plinko() {
       } catch (error) {
         console.error('❌ Push Chain logging failed (Plinko):', error);
       }
+
+      // Log game result to Solana
+      try {
+        const solanaResponse = await fetch('/api/log-to-solana', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameType: 'PLINKO',
+            gameResult: {
+              multiplier: newBetResult.multiplier,
+              payout: newBetResult.payout,
+              rows: newBetResult.rows || 'unknown',
+              riskLevel: newBetResult.riskLevel || 'unknown'
+            },
+            playerAddress: 'unknown', // Will be updated when wallet integration is available
+            betAmount: newBetResult.betAmount || 0,
+            payout: newBetResult.payout || 0,
+            entropyProof: enhancedBetResult.entropyProof
+          })
+        });
+        
+        const solanaResult = await solanaResponse.json();
+        console.log('🔗 Solana logging result (Plinko):', solanaResult);
+        
+        if (solanaResult.success) {
+          enhancedBetResult.entropyProof.solanaTxSignature = solanaResult.transactionSignature;
+          enhancedBetResult.entropyProof.solanaExplorerUrl = solanaResult.solanaExplorerUrl;
+        }
+      } catch (error) {
+        console.error('❌ Solana logging failed (Plinko):', error);
+      }
       
       console.log('📝 Enhanced bet result:', enhancedBetResult);
       setGameHistory(prev => [enhancedBetResult, ...prev].slice(0, 100)); // Keep up to last 100 entries

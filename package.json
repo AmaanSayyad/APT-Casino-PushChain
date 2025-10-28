@@ -29,7 +29,10 @@
     "test:pyth-entropy": "node scripts/test-pyth-entropy.js",
     "verify:onchain": "npx hardhat run scripts/verify-onchain.js --network arbitrum-sepolia",
     "deploy:monad": "npx hardhat run scripts/deploy-casino.js --network monad-testnet",
-    "test:monad": "node scripts/test-monad-integration.js"
+    "test:monad": "node scripts/test-monad-integration.js",
+    "solana:create-wallet": "node scripts/create-solana-wallet.js",
+    "solana:check-balance": "node scripts/check-solana-balance.js",
+    "test:solana-logging": "node scripts/test-solana-logging.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.0",
@@ -46,6 +49,7 @@
     "@react-three/drei": "^9.88.0",
     "@react-three/fiber": "^8.14.5",
     "@reduxjs/toolkit": "^1.9.7",
+    "@solana/web3.js": "^1.98.4",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.75.5",
     "@telegram-apps/bridge": "^1.9.2",
