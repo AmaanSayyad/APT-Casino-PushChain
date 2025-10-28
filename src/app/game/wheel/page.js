@@ -94,7 +94,7 @@ export default function Home() {
     }
 
     // Generate Pyth Entropy in background for provably fair proof
-  const generateEntropyInBackground = async (historyItemId) => {
+  const generateEntropyInBackground = async (historyItemId, historyItem = null) => {
     try {
       console.log('🔮 PYTH ENTROPY: Generating background entropy for Wheel game...');
       
@@ -105,10 +105,12 @@ export default function Home() {
       
       console.log('✅ PYTH ENTROPY: Background entropy generated successfully');
       console.log('🔗 Transaction:', entropyResult.entropyProof.transactionHash);
+      console.log('🎯 Target history item ID:', historyItemId);
       
       // Log game result to Push Chain
-      const historyItem = gameHistory.find(item => item.id === historyItemId);
-      if (historyItem) {
+      const targetHistoryItem = historyItem || gameHistory.find(item => item.id === historyItemId);
+      console.log('🎯 Target history item:', targetHistoryItem);
+      if (targetHistoryItem) {
         try {
           const pushResponse = await fetch('/api/log-to-push', {
             method: 'POST',
@@ -118,13 +120,13 @@ export default function Home() {
             body: JSON.stringify({
               gameType: 'WHEEL',
               gameResult: {
-                multiplier: historyItem.multiplier,
-                payout: historyItem.payout,
-                segments: historyItem.segments || 'unknown'
+                multiplier: targetHistoryItem.multiplier,
+                payout: targetHistoryItem.payout,
+                segments: targetHistoryItem.segments || 'unknown'
               },
               playerAddress: 'unknown', // Will be updated when wallet integration is available
-              betAmount: historyItem.betAmount || 0,
-              payout: historyItem.payout || 0,
+              betAmount: targetHistoryItem.betAmount || 0,
+              payout: targetHistoryItem.payout || 0,
               entropyProof: {
                 requestId: entropyResult.entropyProof?.requestId,
                 sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
@@ -137,50 +139,62 @@ export default function Home() {
           
           const pushResult = await pushResponse.json();
           console.log('🔗 Push Chain logging result (Wheel):', pushResult);
+          console.log('🔗 Push Chain TX Hash:', pushResult.transactionHash);
+          console.log('🔗 Push Chain Explorer URL:', pushResult.pushChainExplorerUrl);
           
           // Update the history item with real entropy proof and Push Chain info
-          setGameHistory(prev => prev.map(item => 
-            item.id === historyItemId 
-              ? {
-                  ...item,
-                  entropyProof: {
-                    requestId: entropyResult.entropyProof?.requestId,
-                    sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
-                    randomValue: entropyResult.randomValue,
-                    randomNumber: entropyResult.randomValue,
-                    transactionHash: entropyResult.entropyProof?.transactionHash,
-                    monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
-                    explorerUrl: entropyResult.entropyProof?.explorerUrl,
-                    timestamp: entropyResult.entropyProof?.timestamp,
-                    source: 'Pyth Entropy',
-                    pushChainTxHash: pushResult.success ? pushResult.transactionHash : null,
-                    pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null
+          console.log('🔄 Updating history item with ID:', historyItemId);
+          setGameHistory(prev => {
+            const updated = prev.map(item => 
+              item.id === historyItemId 
+                ? {
+                    ...item,
+                    entropyProof: {
+                      requestId: entropyResult.entropyProof?.requestId,
+                      sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
+                      randomValue: entropyResult.randomValue,
+                      randomNumber: entropyResult.randomValue,
+                      transactionHash: entropyResult.entropyProof?.transactionHash,
+                      monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
+                      explorerUrl: entropyResult.entropyProof?.explorerUrl,
+                      timestamp: entropyResult.entropyProof?.timestamp,
+                      source: 'Pyth Entropy',
+                      pushChainTxHash: pushResult.success ? pushResult.transactionHash : null,
+                      pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null
+                    }
                   }
-                }
-              : item
-          ));
+                : item
+            );
+            console.log('✅ History updated successfully');
+            return updated;
+          });
         } catch (error) {
           console.error('❌ Push Chain logging failed (Wheel):', error);
           
           // Update the history item with entropy proof only
-          setGameHistory(prev => prev.map(item => 
-            item.id === historyItemId 
-              ? {
-                  ...item,
-                  entropyProof: {
-                    requestId: entropyResult.entropyProof?.requestId,
-                    sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
-                    randomValue: entropyResult.randomValue,
-                    randomNumber: entropyResult.randomValue,
-                    transactionHash: entropyResult.entropyProof?.transactionHash,
-                    monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
-                    explorerUrl: entropyResult.entropyProof?.explorerUrl,
-                    timestamp: entropyResult.entropyProof?.timestamp,
-                    source: 'Pyth Entropy'
+          console.log('🔄 Updating history item (entropy only) with ID:', historyItemId);
+          setGameHistory(prev => {
+            const updated = prev.map(item => 
+              item.id === historyItemId 
+                ? {
+                    ...item,
+                    entropyProof: {
+                      requestId: entropyResult.entropyProof?.requestId,
+                      sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
+                      randomValue: entropyResult.randomValue,
+                      randomNumber: entropyResult.randomValue,
+                      transactionHash: entropyResult.entropyProof?.transactionHash,
+                      monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
+                      explorerUrl: entropyResult.entropyProof?.explorerUrl,
+                      timestamp: entropyResult.entropyProof?.timestamp,
+                      source: 'Pyth Entropy'
+                    }
                   }
-                }
-              : item
-          ));
+                : item
+            );
+            console.log('✅ History updated successfully (entropy only)');
+            return updated;
+          });
         }
       }
       
@@ -313,7 +327,7 @@ export default function Home() {
           }
 
           // Generate Pyth Entropy in background for provably fair proof
-          generateEntropyInBackground(newHistoryItem.id).catch(error => {
+          generateEntropyInBackground(newHistoryItem.id, newHistoryItem).catch(error => {
             console.error('❌ Background entropy generation failed:', error);
           });
           
