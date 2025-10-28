@@ -34,9 +34,9 @@ export default function HeroSection() {
         `font-display capitalize flex text-white flex-col text-center items-center gap-6 z-10 max-w-7xl w-full mx-auto ${showAnnouncement ? '' : 'mt-14 sm:mt-14 md:mt-16'}`
       }>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
-          100% On-Chain{" "}
+          Universal On-chain {" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-magic to-blue-magic">
-          Randomness
+          Casino
           </span>
         </h1>
         <h2 className="text-[#B3B3B3] mt-4 text-lg sm:text-xl leading-relaxed max-w-3xl">

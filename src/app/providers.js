@@ -116,7 +116,7 @@ export default function Providers({ children }) {
 
   // App metadata for Push Universal Wallet
   const appMetadata = {
-    logoUrl: '/logo.png',
+    logoUrl: '/logos/logo-1.png',
     title: 'APT Casino Push Chain',
     description: 'Decentralized casino on Push Chain with provably fair games',
   };
