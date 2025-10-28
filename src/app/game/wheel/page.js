@@ -106,25 +106,83 @@ export default function Home() {
       console.log('✅ PYTH ENTROPY: Background entropy generated successfully');
       console.log('🔗 Transaction:', entropyResult.entropyProof.transactionHash);
       
-      // Update the history item with real entropy proof
-      setGameHistory(prev => prev.map(item => 
-        item.id === historyItemId 
-          ? {
-              ...item,
+      // Log game result to Push Chain
+      const historyItem = gameHistory.find(item => item.id === historyItemId);
+      if (historyItem) {
+        try {
+          const pushResponse = await fetch('/api/log-to-push', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              gameType: 'WHEEL',
+              gameResult: {
+                multiplier: historyItem.multiplier,
+                payout: historyItem.payout,
+                segments: historyItem.segments || 'unknown'
+              },
+              playerAddress: 'unknown', // Will be updated when wallet integration is available
+              betAmount: historyItem.betAmount || 0,
+              payout: historyItem.payout || 0,
               entropyProof: {
                 requestId: entropyResult.entropyProof?.requestId,
                 sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
                 randomValue: entropyResult.randomValue,
-                randomNumber: entropyResult.randomValue,
                 transactionHash: entropyResult.entropyProof?.transactionHash,
-                monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
-                explorerUrl: entropyResult.entropyProof?.explorerUrl,
-                timestamp: entropyResult.entropyProof?.timestamp,
-                source: 'Pyth Entropy'
+                timestamp: entropyResult.entropyProof?.timestamp
               }
-            }
-          : item
-      ));
+            })
+          });
+          
+          const pushResult = await pushResponse.json();
+          console.log('🔗 Push Chain logging result (Wheel):', pushResult);
+          
+          // Update the history item with real entropy proof and Push Chain info
+          setGameHistory(prev => prev.map(item => 
+            item.id === historyItemId 
+              ? {
+                  ...item,
+                  entropyProof: {
+                    requestId: entropyResult.entropyProof?.requestId,
+                    sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
+                    randomValue: entropyResult.randomValue,
+                    randomNumber: entropyResult.randomValue,
+                    transactionHash: entropyResult.entropyProof?.transactionHash,
+                    monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
+                    explorerUrl: entropyResult.entropyProof?.explorerUrl,
+                    timestamp: entropyResult.entropyProof?.timestamp,
+                    source: 'Pyth Entropy',
+                    pushChainTxHash: pushResult.success ? pushResult.transactionHash : null,
+                    pushChainExplorerUrl: pushResult.success ? pushResult.pushChainExplorerUrl : null
+                  }
+                }
+              : item
+          ));
+        } catch (error) {
+          console.error('❌ Push Chain logging failed (Wheel):', error);
+          
+          // Update the history item with entropy proof only
+          setGameHistory(prev => prev.map(item => 
+            item.id === historyItemId 
+              ? {
+                  ...item,
+                  entropyProof: {
+                    requestId: entropyResult.entropyProof?.requestId,
+                    sequenceNumber: entropyResult.entropyProof?.sequenceNumber,
+                    randomValue: entropyResult.randomValue,
+                    randomNumber: entropyResult.randomValue,
+                    transactionHash: entropyResult.entropyProof?.transactionHash,
+                    monadExplorerUrl: entropyResult.entropyProof?.monadExplorerUrl,
+                    explorerUrl: entropyResult.entropyProof?.explorerUrl,
+                    timestamp: entropyResult.entropyProof?.timestamp,
+                    source: 'Pyth Entropy'
+                  }
+                }
+              : item
+          ));
+        }
+      }
       
       // Log on-chain via casino wallet (non-blocking)
       try {
@@ -225,7 +283,7 @@ export default function Home() {
             randomNumber: Math.floor(Math.random() * 1000000),
             transactionHash: 'generating...',
             monadExplorerUrl: 'https://testnet.monadexplorer.com/',
-            explorerUrl: 'https://entropy-explorer.pyth.network/?chain=monad-testnet',
+            explorerUrl: 'https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia',
             timestamp: Date.now(),
             source: 'Generating...'
           };

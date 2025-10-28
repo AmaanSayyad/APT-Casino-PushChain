@@ -595,7 +595,7 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           <Button
                             onClick={() => {
                               if (item.entropyProof.transactionHash) {
-                                window.open(`https://entropy-explorer.pyth.network/?chain=monad-testnet&search=${item.entropyProof.transactionHash}`, '_blank');
+                                window.open(`https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${item.entropyProof.transactionHash}`, '_blank');
                               }
                             }}
                             size="small"
@@ -615,8 +615,10 @@ const WheelHistory = ({ gameHistory = [] }) => {
                           </Button>
                           <Button
                             onClick={() => {
-                              if (item.entropyProof?.transactionHash) {
-                                window.open(`https://testnet.monadexplorer.com/tx/${item.entropyProof.transactionHash}`, '_blank');
+                              const url = item.entropyProof?.pushChainExplorerUrl ||
+                                         `https://donut.push.network/tx/${item.entropyProof?.transactionHash || item.entropyProof?.pushChainTxHash}`;
+                              if (url) {
+                                window.open(url, '_blank');
                               }
                             }}
                             size="small"

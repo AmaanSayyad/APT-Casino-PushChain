@@ -269,7 +269,7 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
   // Open Entropy Explorer link
   const openEntropyExplorer = (txHash) => {
     if (txHash) {
-      const entropyExplorerUrl = `https://entropy-explorer.pyth.network/?chain=push-chain-donut&search=${txHash}`;
+      const entropyExplorerUrl = `https://entropy-explorer.pyth.network/?chain=arbitrum-sepolia&search=${txHash}`;
       window.open(entropyExplorerUrl, '_blank');
     }
   };
@@ -584,11 +584,12 @@ const RouletteHistory = ({ bettingHistory = [] }) => {
                                     </Typography>
                                   </Box>
                                 )}
-                                {(bet.entropyProof?.pushChainExplorerUrl || bet.vrfProof?.transactionHash) && (
+                                {(bet.entropyProof?.pushChainExplorerUrl || bet.vrfProof?.transactionHash || bet.pushChainTxHash) && (
                                   <Box
                                     onClick={() => {
                                       const url = bet.entropyProof?.pushChainExplorerUrl || 
-                                                 `https://donut.push.network/tx/${bet.vrfProof?.transactionHash}`;
+                                                 bet.pushChainExplorerUrl ||
+                                                 `https://donut.push.network/tx/${bet.vrfProof?.transactionHash || bet.pushChainTxHash}`;
                                       window.open(url, '_blank');
                                     }}
                                     sx={{

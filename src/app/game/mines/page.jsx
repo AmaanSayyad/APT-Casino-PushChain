@@ -215,6 +215,38 @@ export default function Mines() {
       };
       
       console.log('✅ PYTH ENTROPY: Mines randomness generated:', entropyProof);
+      
+      // Log game result to Push Chain
+      try {
+        const pushResponse = await fetch('/api/log-to-push', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameType: 'MINES',
+            gameResult: {
+              mines: result.mines || 0,
+              won: result.won || false,
+              multiplier: result.multiplier || 0
+            },
+            playerAddress: 'unknown', // Will be updated when wallet integration is available
+            betAmount: result.betAmount || 0,
+            payout: result.payout || 0,
+            entropyProof: entropyProof
+          })
+        });
+        
+        const pushResult = await pushResponse.json();
+        console.log('🔗 Push Chain logging result (Mines):', pushResult);
+        
+        if (pushResult.success) {
+          entropyProof.pushChainTxHash = pushResult.transactionHash;
+          entropyProof.pushChainExplorerUrl = pushResult.pushChainExplorerUrl;
+        }
+      } catch (error) {
+        console.error('❌ Push Chain logging failed (Mines):', error);
+      }
     } catch (error) {
       console.error('❌ Error using Pyth Entropy for Mines game:', error);
     }

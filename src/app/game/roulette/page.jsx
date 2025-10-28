@@ -2032,6 +2032,50 @@ export default function GameRoulette() {
             source: 'Pyth Entropy'
           };
           
+          // Log game result to Push Chain
+          fetch('/api/log-to-push', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              gameType: 'ROULETTE',
+              gameResult: {
+                winningNumber,
+                totalBets: allBets.length,
+                winningBets: winningBets.length,
+                losingBets: losingBets.length
+              },
+              playerAddress: address || 'unknown',
+              betAmount: totalBetAmount,
+              payout: netResult,
+              entropyProof: newBet.entropyProof
+            })
+          }).then(response => response.json())
+            .then(pushResult => {
+              console.log('🔗 Push Chain logging result:', pushResult);
+              if (pushResult.success) {
+                // Add Push Chain info to bet result
+                newBet.pushChainTxHash = pushResult.transactionHash;
+                newBet.pushChainExplorerUrl = pushResult.pushChainExplorerUrl;
+                
+                // Update betting history with Push Chain info
+                setBettingHistory(prev => {
+                  const updatedHistory = [...prev];
+                  if (updatedHistory.length > 0) {
+                    updatedHistory[0] = { 
+                      ...updatedHistory[0], 
+                      pushChainTxHash: pushResult.transactionHash,
+                      pushChainExplorerUrl: pushResult.pushChainExplorerUrl
+                    };
+                  }
+                  return updatedHistory;
+                });
+              }
+            })
+            .catch(error => {
+              console.error('❌ Push Chain logging failed:', error);
+            });
           
           // Update betting history with entropy proof
           setBettingHistory(prev => {

@@ -219,6 +219,39 @@ export default function Plinko() {
         timestamp: new Date().toISOString()
       };
       
+      // Log game result to Push Chain
+      try {
+        const pushResponse = await fetch('/api/log-to-push', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameType: 'PLINKO',
+            gameResult: {
+              multiplier: newBetResult.multiplier,
+              payout: newBetResult.payout,
+              rows: currentRows,
+              riskLevel: currentRiskLevel
+            },
+            playerAddress: 'unknown', // Will be updated when wallet integration is available
+            betAmount: newBetResult.betAmount || 0,
+            payout: newBetResult.payout || 0,
+            entropyProof: enhancedBetResult.entropyProof
+          })
+        });
+        
+        const pushResult = await pushResponse.json();
+        console.log('🔗 Push Chain logging result (Plinko):', pushResult);
+        
+        if (pushResult.success) {
+          enhancedBetResult.entropyProof.pushChainTxHash = pushResult.transactionHash;
+          enhancedBetResult.entropyProof.pushChainExplorerUrl = pushResult.pushChainExplorerUrl;
+        }
+      } catch (error) {
+        console.error('❌ Push Chain logging failed (Plinko):', error);
+      }
+      
       console.log('📝 Enhanced bet result:', enhancedBetResult);
       setGameHistory(prev => [enhancedBetResult, ...prev].slice(0, 100)); // Keep up to last 100 entries
       
