@@ -286,4 +286,4 @@ graph TB
 ## 🔗 Links
 
 - **Pitch Deck:** https://www.figma.com/slides/XVZxZ2Y91I9h9P8M7zMWL4/APT-Casino-Push?node-id=0-1&t=BIcQweSEa990geiI-1
-- **Live URL:** apt-casino-push-chain.vercel.app
+- **Live URL:** https://apt-casino-push-chain.vercel.app/
