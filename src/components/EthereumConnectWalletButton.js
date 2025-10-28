@@ -1,24 +1,19 @@
 "use client";
 import React from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { PushUniversalAccountButton, usePushWalletContext } from '@pushchain/ui-kit';
 
 export default function EthereumConnectWalletButton() {
+  const { connectionStatus } = usePushWalletContext();
+
+  React.useEffect(() => {
+    if (connectionStatus) {
+      console.log('🔗 Push Wallet connection status:', connectionStatus);
+    }
+  }, [connectionStatus]);
+
   return (
     <div className="relative">
-      <ConnectButton 
-        chainStatus="icon"
-        accountStatus={{
-          smallScreen: 'avatar',
-          largeScreen: 'full',
-        }}
-        showBalance={{
-          smallScreen: false,
-          largeScreen: false,
-        }}
-        onConnect={() => {
-          console.log('🔗 WalletConnect button clicked');
-        }}
-      />
+      <PushUniversalAccountButton />
     </div>
   );
 } 

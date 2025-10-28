@@ -1,12 +1,10 @@
 /**
- * Custom Chain Definitions
- * Defines custom chains not included in wagmi/chains
+ * Push Chain Configuration
+ * Push Universal Wallet handles chain configuration internally
  */
 
-import { defineChain } from 'viem';
-
-// Push Chain Donut Testnet Chain Definition
-export const pushChainDonut = defineChain({
+// Push Chain Donut Testnet Configuration
+export const pushChainDonut = {
   id: 42101,
   name: 'Push Chain Donut Testnet',
   nativeCurrency: {
@@ -29,7 +27,7 @@ export const pushChainDonut = defineChain({
     },
   },
   testnet: true,
-});
+};
 
 export default {
   pushChainDonut,

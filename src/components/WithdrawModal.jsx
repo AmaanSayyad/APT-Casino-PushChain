@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaWallet, FaCoins, FaArrowRight, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance } from '@/store/balanceSlice';
-import { useAccount } from 'wagmi';
+import { usePushWalletContext, usePushChainClient, PushUI } from '@pushchain/ui-kit';
 // Mock ethereumClient for demo purposes
 const ethereumClient = {
   waitForTransaction: async ({ transactionHash }) => {
@@ -24,7 +24,10 @@ const WithdrawModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
   
   const { userBalance } = useSelector((state) => state.balance);
-  const { address: account, isConnected: connected } = useAccount();
+  const { connectionStatus } = usePushWalletContext();
+  const { pushChainClient } = usePushChainClient();
+  const connected = connectionStatus === PushUI.CONSTANTS.CONNECTION.STATUS.CONNECTED;
+  const account = pushChainClient?.universal?.account || null;
   const dispatch = useDispatch();
   
   // Display balance PC format

@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect } from 'react';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { usePushWalletContext, usePushChainClient, PushUI } from '@pushchain/ui-kit';
 
 export default function ArbitrumConnectWalletButton() {
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { connectionStatus } = usePushWalletContext();
+  const { pushChainClient } = usePushChainClient();
+  const isConnected = connectionStatus === PushUI.CONSTANTS.CONNECTION.STATUS.CONNECTED;
+  const address = pushChainClient?.universal?.account || null;
 
   // Auto-reconnect on page load if previously connected
   useEffect(() => {

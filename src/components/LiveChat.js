@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "@/lib/supabaseClient";
-import { useAccount } from 'wagmi';
+import { usePushWalletContext, usePushChainClient, PushUI } from '@pushchain/ui-kit';
 
 function normalizeWalletAddress(account) {
   try {
@@ -25,7 +25,9 @@ function normalizeWalletAddress(account) {
 }
 
 export default function LiveChat({ open, onClose }) {
-  const { address } = useAccount();
+  const { connectionStatus } = usePushWalletContext();
+  const { pushChainClient } = usePushChainClient();
+  const address = pushChainClient?.universal?.account || null;
   const walletAddr = address || "guest";
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");

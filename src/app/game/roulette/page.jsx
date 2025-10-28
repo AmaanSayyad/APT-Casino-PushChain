@@ -31,7 +31,7 @@ import StrategyGuide from './components/StrategyGuide';
 import RoulettePayout from './components/RoulettePayout';
 import WinProbabilities from './components/WinProbabilities';
 import RouletteHistory from './components/RouletteHistory';
-import { useAccount } from 'wagmi';
+import { usePushWalletContext, usePushChainClient, PushUI } from '@pushchain/ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBalance, setLoading, loadBalanceFromStorage } from '@/store/balanceSlice';
 import pythEntropyService from '@/services/PythEntropyService';
@@ -1190,8 +1190,11 @@ export default function GameRoulette() {
   const [bettingHistory, setBettingHistory] = useState([]);
   const [error, setError] = useState(null);
 
-  // Ethereum wallet
-  const { address, isConnected } = useAccount();
+  // Push Universal Wallet
+  const { connectionStatus } = usePushWalletContext();
+  const { pushChainClient } = usePushChainClient();
+  const isConnected = connectionStatus === PushUI.CONSTANTS.CONNECTION.STATUS.CONNECTED;
+  const address = pushChainClient?.universal?.account || null;
   const account = { address };
   const connected = isConnected;
   const isWalletReady = isConnected && address;

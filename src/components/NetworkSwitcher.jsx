@@ -1,43 +1,32 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useAccount, useChainId, useSwitchChain } from 'wagmi';
-import { switchToPushChainDonut, isPushChainDonut, PUSH_CHAIN_DONUT_CONFIG } from '@/utils/networkUtils';
+import { usePushWalletContext, usePushChainClient, PushUI } from '@pushchain/ui-kit';
+// Push Universal Wallet handles network switching automatically
 
 const NetworkSwitcher = () => {
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
-  const { switchChain } = useSwitchChain();
+  const { connectionStatus } = usePushWalletContext();
+  const { pushChainClient } = usePushChainClient();
+  const isConnected = connectionStatus === PushUI.CONSTANTS.CONNECTION.STATUS.CONNECTED;
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
 
   useEffect(() => {
-    if (isConnected && chainId) {
-      setIsWrongNetwork(!isPushChainDonut(chainId));
+    // Push Universal Wallet is always on the correct network
+    if (isConnected) {
+      setIsWrongNetwork(false);
     }
-  }, [isConnected, chainId]);
+  }, [isConnected]);
 
   const handleSwitchNetwork = async () => {
     if (!isConnected) return;
 
     setIsSwitching(true);
     try {
-      // First try using wagmi's switchChain
-      if (switchChain) {
-        try {
-          await switchChain({ chainId: 42101 });
-        } catch (wagmiError) {
-          console.log('Wagmi switch failed, trying manual method:', wagmiError);
-          // If wagmi fails, try manual MetaMask method
-          await switchToPushChainDonut();
-        }
-      } else {
-        // Fallback to manual method
-        await switchToMonadTestnet();
-      }
+      // Push Universal Wallet handles network switching automatically
+      console.log('Push Universal Wallet is already on the correct network');
     } catch (error) {
-      console.error('Failed to switch network:', error);
-      alert('Failed to switch to Push Chain Donut Testnet. Please add it manually in MetaMask.');
+      console.error('Network switch error:', error);
     } finally {
       setIsSwitching(false);
     }
