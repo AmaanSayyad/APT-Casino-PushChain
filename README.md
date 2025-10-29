@@ -1,6 +1,6 @@
 # APT Casino - Push Chain
 
-A decentralized casino platform built on Push Chain Donut Testnet with Pyth Entropy for provably fair gaming.
+A Universal casino platform built on Push Chain Donut Testnet with Pyth Entropy for provably fair gaming.
 
 ## 🎮 The Story Behind APT Casino
 
@@ -34,7 +34,6 @@ APT Casino addresses these problems by offering:
 
 
 - **Multiple Games**: Wheel, Roulette, Plinko, and Mines with verifiable outcomes
-- **PC Token**: Native currency for Push Chain Donut Testnet
 - **Flexible Withdrawal**: Unrestricted access to funds
 - **Transparent Bonuses**: Clear terms without hidden traps
 - **True Asset Ownership**: Decentralized asset management
@@ -93,7 +92,7 @@ Add Push Chain Donut Testnet to your wallet:
 - **Block Explorer**: `https://donut.push.network`
 
 ## 🏗 System Architecture Overview
-<img width="1540" height="695" alt="System Architecture" src="https://github.com/user-attachments/assets/f8d4e99d-d31b-4a81-b924-5fc1d8dade78" />
+![Image 29-10-25 at 1 56 AM](https://github.com/user-attachments/assets/20cbae82-69a1-4ac0-8e28-3fc7dc8aa6bf)
 
 ```mermaid
 graph TB
@@ -273,7 +272,7 @@ graph TB
 
 ## 🔮 Future Roadmap
 
-- **Mainnet Launch**: Deploying on mainnet for real-world use
+- **Mainnet Launch**: Deploying on push chain mainnet for real-world use after launch.
 - **Additional Games**: Expanding the game selection
 - **Enhanced DeFi Features**: Staking, farming, yield strategies
 - **Developer Platform**: Allowing third-party game development
@@ -286,4 +285,5 @@ graph TB
 
 ## 🔗 Links
 
-- **Push Chain GUD Hackathon**: [https://dorahacks.io/hackathon/pushchain-gud/detail](https://dorahacks.io/hackathon/pushchain-gud/detail)
+- **Pitch Deck:** https://www.figma.com/slides/XVZxZ2Y91I9h9P8M7zMWL4/APT-Casino-Push?node-id=0-1&t=BIcQweSEa990geiI-1
+- **Live URL:** https://apt-casino-push-chain.vercel.app/
