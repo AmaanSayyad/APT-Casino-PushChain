@@ -49,7 +49,7 @@ module.exports = {
     apiKey: {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY || "",
       arbitrumOne: process.env.ARBISCAN_API_KEY || "",
-      pushChainDonut: "no-api-key-required",
+      "push-chain-donut": "no-api-key-required",
     },
     customChains: [
       {
