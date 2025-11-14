@@ -55,6 +55,7 @@
     "@telegram-apps/bridge": "^1.9.2",
     "@types/three": "^0.176.0",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "@visx/responsive": "^3.10.2",
     "@wallet-standard/core": "^1.1.1",
     "autoprefixer": "10.4.19",

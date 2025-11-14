@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import GlobalWalletManager from "@/components/GlobalWalletManager";
 import NetworkSwitcher from "@/components/NetworkSwitcher";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -45,6 +46,7 @@ export default function RootLayout({ children }) {
           {children}
           <Footer />
           <Analytics />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
